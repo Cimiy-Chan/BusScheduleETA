@@ -118,10 +118,13 @@ class EtaActivity : AppCompatActivity() {
 
         val firstMs = valid[0].etaMillis!!
         if (firstMs - now < 60_000) {
-            binding.tvMinutes.text = "即將"
-            binding.tvMinutesUnit.text = "到站"
+            binding.tvMinutes.text = "即將到站"
+            binding.tvMinutes.textSize = 40f
+            binding.tvMinutesUnit.visibility = View.GONE
         } else {
             binding.tvMinutes.text = ((firstMs - now) / 60_000L).toInt().toString()
+            binding.tvMinutes.textSize = 96f
+            binding.tvMinutesUnit.visibility = View.VISIBLE
             binding.tvMinutesUnit.text = "分鐘"
         }
         binding.tvClock.text = "約 ${clock.format(Date(firstMs))}"
@@ -141,7 +144,10 @@ class EtaActivity : AppCompatActivity() {
         }
     }
 
+
     private fun showMessage(msg: String) {
+        binding.tvMinutes.textSize = 96f
+        binding.tvMinutesUnit.visibility = View.VISIBLE
         binding.tvMessage.text = msg
         binding.tvMessage.visibility = View.VISIBLE
         binding.tvNextLabel.visibility = View.GONE

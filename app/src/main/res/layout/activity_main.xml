@@ -12,7 +12,7 @@
         android:id="@+id/tvTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="我的巴士"
+        android:text="快速巴士路線搜尋服務"
         android:textColor="@color/text_primary"
         android:textSize="28sp"
         android:textStyle="bold"

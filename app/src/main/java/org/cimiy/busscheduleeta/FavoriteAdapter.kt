@@ -15,6 +15,7 @@ class FavoriteAdapter(
 
     private var items: List<FavoriteTrip> = emptyList()
 
+
     fun submit(list: List<FavoriteTrip>) {
         items = list
         notifyDataSetChanged()
@@ -42,6 +43,17 @@ class FavoriteAdapter(
                     if (isKmb) R.color.kmb_accent else R.color.ctb_accent
                 )
             )
+
+            val colors = intArrayOf(
+                R.color.fav_bg_0, R.color.fav_bg_1, R.color.fav_bg_2,
+                R.color.fav_bg_3, R.color.fav_bg_4, R.color.fav_bg_5,
+                R.color.fav_bg_6, R.color.fav_bg_7, R.color.fav_bg_8
+            )
+            b.root.setCardBackgroundColor(
+                ContextCompat.getColor(b.root.context, colors[bindingAdapterPosition % colors.size])
+            )
+
+
             b.root.setOnClickListener { onClick(t) }
             b.root.setOnLongClickListener { onLongClick(t); true }
         }

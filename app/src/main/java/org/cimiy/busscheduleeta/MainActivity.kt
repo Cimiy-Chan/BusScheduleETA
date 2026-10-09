@@ -10,11 +10,17 @@ import androidx.recyclerview.widget.GridLayoutManager
 import org.cimiy.busscheduleeta.data.FavoriteTrip
 import org.cimiy.busscheduleeta.databinding.ActivityMainBinding
 import android.content.Intent
+import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import org.cimiy.busscheduleeta.data.AppDatabase
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -43,7 +49,23 @@ class MainActivity : AppCompatActivity() {
                         .putExtra("service_type", trip.serviceType)
                         .putExtra("stop_id", trip.stopId)
                 )
-            },            onLongClick = { /* 第 4 項才做刪除 */ }
+            },
+            onLongClick = { trip ->
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("刪除常用行程？")
+                    .setMessage("${trip.routeLabel} 往${trip.destLabel}\n上車站：${trip.stopLabel}")
+                    .setNegativeButton("取消", null)
+                    .setPositiveButton("刪除") { _, _ ->
+                        lifecycleScope.launch {
+                            AppDatabase.get(this@MainActivity).favoriteDao().delete(trip)
+                        }
+                    }
+                    .show()
+                    .also { dialog ->
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                            ?.setTextColor(getColor(R.color.error_text))
+                    }
+            }
         )
         binding.rvFavorites.layoutManager = GridLayoutManager(this, 3)
         binding.rvFavorites.adapter = adapter
@@ -64,5 +86,7 @@ class MainActivity : AppCompatActivity() {
         binding.fabAdd.setOnClickListener {
             startActivity(Intent(this, PickRouteActivity::class.java))
         }
-    }
+        binding.btnSettings.setOnClickListener {
+            AppToast.show(this, "功能建設中", R.drawable.ic_toast_build)
+        }    }
 }

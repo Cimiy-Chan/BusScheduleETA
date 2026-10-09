@@ -11,4 +11,14 @@
     <color name="ctb_accent">#EF6C00</color>
     <color name="divider">#E0E0E0</color>
     <color name="error_text">#B71C1C</color>
+    <color name="fav_bg_0">#E3F2FD</color>
+    <color name="fav_bg_1">#FFF3E0</color>
+    <color name="fav_bg_2">#E8F5E9</color>
+    <color name="fav_bg_3">#F3E5F5</color>
+    <color name="fav_bg_4">#FFEBEE</color>
+    <color name="fav_bg_5">#E0F7FA</color>
+    <color name="fav_bg_6">#FFF8E1</color>
+    <color name="fav_bg_7">#E8EAF6</color>
+    <color name="fav_bg_8">#FCE4EC</color>
+    <color name="eta_bg">#ECEFF1</color>
 </resources>

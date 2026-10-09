@@ -60,7 +60,7 @@ class PickStopActivity : AppCompatActivity() {
                         sortOrder = dao.count()
                     )
                 )
-                Toast.makeText(this@PickStopActivity, "已加入常用", Toast.LENGTH_SHORT).show()
+                AppToast.show(this@PickStopActivity, "已加入常用", R.drawable.ic_toast_ok)
                 startActivity(
                     Intent(this@PickStopActivity, MainActivity::class.java)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -78,7 +78,7 @@ class PickStopActivity : AppCompatActivity() {
                 binding.tvHint.text = "$route 往$dest　共 ${list.size} 個站"
             } catch (e: Exception) {
                 binding.tvHint.text = "載入失敗：${e.message}"
-                Toast.makeText(this@PickStopActivity, "載入失敗：${e.message}", Toast.LENGTH_LONG).show()
+                AppToast.show(this@PickStopActivity, "載入失敗：${e.message}", R.drawable.ic_toast_warn)
             }
         }
     }

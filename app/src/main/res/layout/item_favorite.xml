@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:text="九巴"
             android:textColor="@color/kmb_accent"
-            android:textSize="12sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
