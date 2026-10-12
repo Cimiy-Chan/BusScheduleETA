@@ -20,5 +20,10 @@
     <color name="fav_bg_6">#FFF8E1</color>
     <color name="fav_bg_7">#E8EAF6</color>
     <color name="fav_bg_8">#FCE4EC</color>
-    <color name="eta_bg">#ECEFF1</color>
+    <color name="eta_bg">#E2E6E9</color>
+    <color name="dir_inb">#60EB6B</color>
+    <color name="dir_outb">#ED6F83</color>
+    <color name="page_bg">#FFF5F5F5</color>
+    <color name="icon_tint">#FF212121</color>
+    <color name="fav_card_text">#FF212121</color>
 </resources>

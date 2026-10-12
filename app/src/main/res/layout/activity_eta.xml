@@ -5,7 +5,7 @@
     android:id="@+id/etaRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light"
+    android:background="@color/eta_bg"
     android:padding="16dp">
 
     <ImageButton

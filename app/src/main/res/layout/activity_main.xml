@@ -5,7 +5,7 @@
     android:id="@+id/mainRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light"
+    android:background="@color/page_bg"
     android:padding="16dp">
 
     <TextView
@@ -25,12 +25,12 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="設定"
-        android:src="@android:drawable/ic_menu_preferences"
+        android:contentDescription="@string/settings"
         app:layout_constraintBottom_toBottomOf="@id/tvTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tvTitle"
-        app:tint="@color/text_secondary" />
+        app:tint="@color/icon_tint"
+        app:srcCompat="@drawable/ic_more_vert"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFavorites"

@@ -25,6 +25,7 @@
             android:id="@+id/tvCompany"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="九巴"
             android:textColor="@color/kmb_accent"
             android:textSize="16sp"
@@ -36,8 +37,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="104"
-            android:textColor="@color/text_primary"
-            android:textSize="32sp"
+            android:textColor="@color/fav_card_text"
+            android:textSize="40sp"
             android:textStyle="bold" />
 
         <TextView
@@ -49,7 +50,7 @@
             android:gravity="center"
             android:maxLines="1"
             android:text="→ 旺角"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/fav_card_text"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -62,7 +63,7 @@
             android:gravity="center"
             android:maxLines="1"
             android:text="彌敦道"
-            android:textColor="@color/text_secondary"
+            android:textColor="@color/fav_card_text"
             android:textSize="13sp" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

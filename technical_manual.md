@@ -43,7 +43,10 @@
 3. 同路線加反方向（城巴較慢，不應再輕易 403）。  
 4. 長按刪除、滿 9 個時「＋」消失。  
 5. 飛行模式：應見網絡錯誤提示（可帶警告圖示）。
-
 ---
+## 補充
 
-三份齊了。@軟件開發工程師 技術段落若要補版本號或更細 API 路徑，請直接加在第三份後面。備份完、今日收工。明天見。
+* 城巴請用 v2：/v2/transport/citybus/...（不要用舊版 citybus-nwfb）。
+* 憑證：res/raw/hkpost_root_ca3.pem、hkpost_ssl_ca3.pem + network_security_config.xml。
+* 提示：AppToast 自訂畫面（ic_toast_build／ok／warn），避免系統預設機械人圖示。
+常用格底色：fav_bg_0…fav_bg_8，按列表位置循環。

@@ -19,6 +19,10 @@ class PickStopActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPickStopBinding
     private lateinit var adapter: StopAdapter
 
+    companion object {
+        private const val MAX_FAVORITES = 12
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -43,8 +47,8 @@ class PickStopActivity : AppCompatActivity() {
         adapter = StopAdapter { stop ->
             lifecycleScope.launch {
                 val dao = AppDatabase.get(this@PickStopActivity).favoriteDao()
-                if (dao.count() >= 9) {
-                    Toast.makeText(this@PickStopActivity, "最多只能加 9 個常用行程", Toast.LENGTH_LONG).show()
+                if (dao.count() >= MAX_FAVORITES) {
+                    Toast.makeText(this@PickStopActivity, "最多只能加 12 個常用行程", Toast.LENGTH_LONG).show()
                     return@launch
                 }
                 dao.insert(

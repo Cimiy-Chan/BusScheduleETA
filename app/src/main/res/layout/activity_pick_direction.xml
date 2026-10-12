@@ -41,8 +41,12 @@
         android:layout_height="96dp"
         android:layout_marginTop="40dp"
         android:text="往 旺角"
-        android:textSize="24sp"
-        app:cornerRadius="16dp" />
+        android:textSize="36sp"
+        app:backgroundTint="@color/fav_bg_4"
+        android:textColor="@color/text_primary"
+        app:strokeColor="@color/dir_outb"
+        app:strokeWidth="2dp"
+        app:cornerRadius="16dp"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnInbound"
@@ -52,8 +56,9 @@
         android:layout_marginTop="20dp"
         android:text="往 華貴邨"
         android:textColor="@color/text_primary"
-        android:textSize="24sp"
+        android:textSize="36sp"
+        app:backgroundTint="@color/fav_bg_2"
         app:cornerRadius="16dp"
-        app:strokeColor="@color/accent"
+        app:strokeColor="@color/dir_inb"
         app:strokeWidth="2dp" />
 </LinearLayout>

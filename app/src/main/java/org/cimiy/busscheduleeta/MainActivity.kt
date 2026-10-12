@@ -20,16 +20,24 @@ import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import android.widget.PopupMenu
+import androidx.appcompat.app.AppCompatDelegate
+
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: FavoriteAdapter
 
+    companion object {
+        private const val MAX_FAVORITE = 12
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
+        applySavedTheme()
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(binding.mainRoot) { v, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -78,7 +86,7 @@ class MainActivity : AppCompatActivity() {
                 AppDatabase.get(this@MainActivity).favoriteDao().all().collect { list ->
                     adapter.submit(list)
                     binding.tvEmpty.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
-                    binding.fabAdd.visibility = if (list.size >= 9) View.GONE else View.VISIBLE
+                    binding.fabAdd.visibility = if (list.size >= MAX_FAVORITE) View.GONE else View.VISIBLE
                 }
             }
         }
@@ -86,7 +94,69 @@ class MainActivity : AppCompatActivity() {
         binding.fabAdd.setOnClickListener {
             startActivity(Intent(this, PickRouteActivity::class.java))
         }
-        binding.btnSettings.setOnClickListener {
-            AppToast.show(this, "功能建設中", R.drawable.ic_toast_build)
-        }    }
+
+        binding.btnSettings.setOnClickListener { view ->
+            PopupMenu(this, view).apply {
+                menuInflater.inflate(R.menu.menu_main, menu)
+                setOnMenuItemClickListener { item ->
+                    when (item.itemId) {
+                        R.id.action_about -> {
+                            showAboutDialog()
+                            true
+                        }
+                        R.id.action_appearance -> {
+                            showAppearanceDialog()
+                            true
+                        }
+                        else -> false
+                    }
+                }
+                show()
+            }
+        }
+
+    }
+
+    private fun showAboutDialog() {
+        val view = layoutInflater.inflate(R.layout.dialog_about, null)
+        AlertDialog.Builder(this)
+            .setTitle(R.string.about)
+            .setView(view)
+            .setPositiveButton(R.string.about_ok, null)
+            .show()
+    }
+    private val prefs by lazy {
+        getSharedPreferences("settings", MODE_PRIVATE)
+    }
+
+    private fun applySavedTheme() {
+        val mode = prefs.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        AppCompatDelegate.setDefaultNightMode(mode)
+    }
+
+    private fun showAppearanceDialog() {
+        val labels = arrayOf(
+            getString(R.string.theme_light),
+            getString(R.string.theme_dark),
+            getString(R.string.theme_system)
+        )
+        val modes = intArrayOf(
+            AppCompatDelegate.MODE_NIGHT_NO,
+            AppCompatDelegate.MODE_NIGHT_YES,
+            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        )
+        val current = prefs.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        val checked = modes.indexOf(current).coerceAtLeast(0)
+
+        AlertDialog.Builder(this)
+            .setTitle(R.string.appearance)
+            .setSingleChoiceItems(labels, checked) { dialog, which ->
+                val mode = modes[which]
+                prefs.edit().putInt("night_mode", mode).apply()
+                AppCompatDelegate.setDefaultNightMode(mode)
+                dialog.dismiss()
+                recreate()
+            }
+            .show()
+    }
 }
