@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:background="@color/card_bg"
         android:padding="16dp">
 
         <TextView
@@ -34,9 +35,9 @@
             android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:text="104"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/fav_card_text"
             android:textSize="22sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tvEndpoints"
@@ -44,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="華貴邨 ↔ 九龍灣"
-            android:textColor="@color/text_secondary"
+            android:textColor="@color/fav_card_text"
             android:textSize="16sp" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

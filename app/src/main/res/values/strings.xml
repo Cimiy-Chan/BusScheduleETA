@@ -9,4 +9,5 @@
     <string name="theme_light">淺色</string>
     <string name="theme_dark">深色</string>
     <string name="theme_system">跟隨系統</string>
+    <string name="route_search_hint">"輸入路線號碼，例如 104"</string>
 </resources>

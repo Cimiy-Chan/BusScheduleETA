@@ -5,7 +5,7 @@
     android:id="@+id/pickRouteRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light"
+    android:background="@color/page_bg"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -22,7 +22,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="返回"
             android:src="?attr/homeAsUpIndicator"
-            app:tint="@color/text_primary" />
+            app:tint="@color/icon_tint" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -30,6 +30,7 @@
             android:layout_marginStart="8dp"
             android:text="選擇路線"
             android:textColor="@color/text_primary"
+            android:tint="@color/icon_tint"
             android:textSize="24sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -40,16 +41,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="輸入路線號碼，例如 104">
+        app:hintEnabled="false"
+        app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/route_search_hint"
             android:inputType="text"
-            android:textColor="@color/text_primary"
-            android:maxLines="1"
-            android:textSize="22sp" />
+            android:textSize="20sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView

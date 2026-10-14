@@ -5,7 +5,7 @@
     android:id="@+id/pickDirectionRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light"
+    android:background="@color/page_bg"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -30,6 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="104　選擇方向"
+            app:tint = "@color/icon_tint"
             android:textColor="@color/text_primary"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -43,7 +44,7 @@
         android:text="往 旺角"
         android:textSize="36sp"
         app:backgroundTint="@color/fav_bg_4"
-        android:textColor="@color/text_primary"
+        android:textColor="@color/fav_card_text"
         app:strokeColor="@color/dir_outb"
         app:strokeWidth="2dp"
         app:cornerRadius="16dp"/>
@@ -55,7 +56,7 @@
         android:layout_height="96dp"
         android:layout_marginTop="20dp"
         android:text="往 華貴邨"
-        android:textColor="@color/text_primary"
+        android:textColor="@color/fav_card_text"
         android:textSize="36sp"
         app:backgroundTint="@color/fav_bg_2"
         app:cornerRadius="16dp"
