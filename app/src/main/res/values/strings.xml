@@ -16,4 +16,5 @@
     <string name="location_sorted_nearby">已按附近位置排序</string>
     <string name="location_permission_needed">需要定位權限才能自動選附近車站</string>
     <string name="location_auto_selected">已自動選擇附近車站：%1$s</string>
+    <string name="routes_loading">正在載入路線資料，請稍候…</string>
 </resources>

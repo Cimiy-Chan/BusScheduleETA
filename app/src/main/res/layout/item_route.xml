@@ -35,7 +35,7 @@
             android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:text="104"
-            android:textColor="@color/fav_card_text"
+            android:textColor="@color/text_primary"
             android:textSize="22sp"
             android:textStyle="bold"/>
 
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="華貴邨 ↔ 九龍灣"
-            android:textColor="@color/fav_card_text"
+            android:textColor="@color/text_primary"
             android:textSize="16sp" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

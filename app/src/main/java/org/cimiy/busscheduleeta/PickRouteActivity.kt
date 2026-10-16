@@ -42,6 +42,7 @@ class PickRouteActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener { finish() }
         binding.etSearch.doAfterTextChanged { adapter.filter(it?.toString().orEmpty()) }
         binding.tvError.visibility = View.GONE
+        binding.loadingRoutes.visibility = View.VISIBLE
 
         //Toast.makeText(this, "正在下載路線…", Toast.LENGTH_SHORT).show()
         lifecycleScope.launch {
@@ -60,6 +61,8 @@ class PickRouteActivity : AppCompatActivity() {
                 }
                 binding.tvError.text = "下載失敗\n$full"
                 binding.tvError.visibility = View.VISIBLE
+            } finally {
+                binding.loadingRoutes.visibility = View.GONE
             }
         }
     }
