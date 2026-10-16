@@ -15,4 +15,5 @@
     <string name="location_auto">自動（附近）</string>
     <string name="location_sorted_nearby">已按附近位置排序</string>
     <string name="location_permission_needed">需要定位權限才能自動選附近車站</string>
+    <string name="location_auto_selected">已自動選擇附近車站：%1$s</string>
 </resources>

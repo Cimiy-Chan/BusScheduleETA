@@ -39,8 +39,14 @@ class PickStopActivity : AppCompatActivity() {
     ) { result ->
         val ok = result[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
                 result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-        if (ok) trySortByNearby() else keepManualList()
+        if (ok) tryAutoSelectNearest() else keepManualList()
     }
+
+    private var company = ""
+    private var route = ""
+    private var direction = ""
+    private var serviceType = "1"
+    private var dest = ""
     companion object {
         private const val MAX_FAVORITES = 12
     }
@@ -56,18 +62,19 @@ class PickStopActivity : AppCompatActivity() {
             insets
         }
 
-        val company = intent.getStringExtra(PickRouteActivity.EXTRA_COMPANY).orEmpty()
-        val route = intent.getStringExtra(PickRouteActivity.EXTRA_ROUTE).orEmpty()
-        val direction = intent.getStringExtra(PickDirectionActivity.EXTRA_DIRECTION).orEmpty()
-        val serviceType = intent.getStringExtra(PickDirectionActivity.EXTRA_SERVICE_TYPE) ?: "1"
-        val dest = intent.getStringExtra(PickDirectionActivity.EXTRA_DEST).orEmpty()
+        company = intent.getStringExtra(PickRouteActivity.EXTRA_COMPANY).orEmpty()
+        route = intent.getStringExtra(PickRouteActivity.EXTRA_ROUTE).orEmpty()
+        direction = intent.getStringExtra(PickDirectionActivity.EXTRA_DIRECTION).orEmpty()
+        serviceType = intent.getStringExtra(PickDirectionActivity.EXTRA_SERVICE_TYPE) ?: "1"
+        dest = intent.getStringExtra(PickDirectionActivity.EXTRA_DEST).orEmpty()
 
         binding.tvTitle.text = "選擇上車站"
         binding.tvHint.text = "$route 往$dest　正在載入車站…"
         binding.btnBack.setOnClickListener { finish() }
 
-        adapter = StopAdapter { stop ->
-            lifecycleScope.launch {
+        adapter = StopAdapter { stop -> selectStop(stop)}
+
+            /* lifecycleScope.launch {
                 val dao = AppDatabase.get(this@PickStopActivity).favoriteDao()
                 if (dao.count() >= MAX_FAVORITES) {
                     Toast.makeText(this@PickStopActivity, "最多只能加 12 個常用行程", Toast.LENGTH_LONG).show()
@@ -92,15 +99,15 @@ class PickStopActivity : AppCompatActivity() {
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 )
                 finish()
-            }
-        }
+            } */
+
         binding.rvStops.layoutManager = LinearLayoutManager(this)
         binding.rvStops.adapter = adapter
 
         lifecycleScope.launch {
             try {
                 val list = BusApi.stops(company, route, direction, serviceType)
-                adapter.submit(list)
+                applyStops(list)
                 binding.tvHint.text = "$route 往$dest　共 ${list.size} 個站"
             } catch (e: Exception) {
                 binding.tvHint.text = "載入失敗：${e.message}"
@@ -121,7 +128,7 @@ class PickStopActivity : AppCompatActivity() {
         val fine = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
         val coarse = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
         if (fine == PackageManager.PERMISSION_GRANTED || coarse == PackageManager.PERMISSION_GRANTED) {
-            trySortByNearby()
+            tryAutoSelectNearest()
         } else {
             locPermission.launch(
                 arrayOf(
@@ -132,10 +139,65 @@ class PickStopActivity : AppCompatActivity() {
         }
     }
 
+    private fun selectStop(stop: org.cimiy.busscheduleeta.data.StopOption) {
+        lifecycleScope.launch {
+            val dao = AppDatabase.get(this@PickStopActivity).favoriteDao()
+            if (dao.count() >= MAX_FAVORITES) {
+                Toast.makeText(this@PickStopActivity, getString(R.string.favorites_full), Toast.LENGTH_LONG).show()
+                keepManualList()
+                return@launch
+            }
+            dao.insert(
+                FavoriteTrip(
+                    company = company,
+                    route = route,
+                    direction = direction,
+                    serviceType = serviceType,
+                    stopId = stop.stopId,
+                    routeLabel = route,
+                    destLabel = dest,
+                    stopLabel = stop.nameTc,
+                    sortOrder = dao.count()
+                )
+            )
+            AppToast.show(
+                this@PickStopActivity,
+                getString(R.string.location_auto_selected, stop.nameTc),
+                R.drawable.ic_toast_ok
+            )
+            startActivity(
+                Intent(this@PickStopActivity, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            )
+            finish()
+        }
+    }
+
+    private fun tryAutoSelectNearest() {
+        val loc = lastKnownLocation()
+        if (loc == null) {
+            keepManualList()
+            AppToast.show(this, getString(R.string.location_permission_needed), R.drawable.ic_toast_warn)
+            return
+        }
+        val nearest = baseStops
+            .filter { !it.lat.isNaN() && !it.lng.isNaN() }
+            .minByOrNull { distanceMeters(loc.latitude, loc.longitude, it.lat, it.lng) }
+        if (nearest == null) {
+            keepManualList()
+            return
+        }
+        binding.rvStops.visibility = View.GONE
+        binding.tvLocationHint.visibility = View.GONE
+        selectStop(nearest)
+    }
+
     private fun keepManualList() {
         adapter.submit(baseStops)
         binding.tvLocationHint.visibility = View.GONE
     }
+
+    /*
     private fun trySortByNearby() {
         val loc = lastKnownLocation()
         if (loc == null) {
@@ -149,6 +211,8 @@ class PickStopActivity : AppCompatActivity() {
         adapter.submit(sorted)
         binding.tvLocationHint.visibility = View.VISIBLE
     }
+
+     */
 
     private fun lastKnownLocation(): Location? {
         val lm = getSystemService(LOCATION_SERVICE) as LocationManager
