@@ -17,7 +17,13 @@ data class RouteOption(
     val serviceType: String = "1"
 )
 
-data class StopOption(val seq: Int, val stopId: String, val nameTc: String)
+data class StopOption(
+    val seq: Int,
+    val stopId: String,
+    val nameTc: String,
+    val lat: Double = Double.NaN,
+    val lng: Double = Double.NaN
+)
 data class EtaItem(val etaMillis: Long?, val remark: String)
 
 object BusApi {
@@ -116,6 +122,7 @@ object BusApi {
             }
         }
 
+    /*
     private suspend fun kmbStopsMap(): Map<String, String> {
         kmbStopNames?.let { return it }
         val map = HashMap<String, String>()
@@ -125,6 +132,26 @@ object BusApi {
             map[s.getString("stop").trim()] = s.optString("name_tc")
         }
         kmbStopNames = map
+        return map
+    }
+
+     */
+    private data class StopMeta(val nameTc: String, val lat: Double, val lng: Double)
+    @Volatile private var kmbStopMeta: Map<String, StopMeta>? = null
+
+    private suspend fun kmbStopsMeta(): Map<String, StopMeta> {
+        kmbStopMeta?.let { return it }
+        val map = HashMap<String, StopMeta>()
+        val allStops = JSONObject(get("https://data.etabus.gov.hk/v1/transport/kmb/stop")).arr("data")
+        for (i in 0 until allStops.length()) {
+            val s = allStops.getJSONObject(i)
+            map[s.getString("stop").trim()] = StopMeta(
+                s.optString("name_tc"),
+                s.optDouble("lat", Double.NaN),
+                s.optDouble("long", Double.NaN)
+            )
+        }
+        kmbStopMeta = map
         return map
     }
 
@@ -142,7 +169,7 @@ object BusApi {
             val dirPath = if (direction == "O") "outbound" else "inbound"
             when (company) {
                 "KMB" -> {
-                    val stopMap = kmbStopsMap()
+                    val stopMap = kmbStopsMeta()
                     val arr = JSONObject(
                         get("https://data.etabus.gov.hk/v1/transport/kmb/route-stop/$route/$dirPath/$serviceType")
                     ).arr("data")
@@ -150,7 +177,9 @@ object BusApi {
                         for (i in 0 until arr.length()) {
                             val o = arr.getJSONObject(i)
                             val id = o.getString("stop").trim()
-                            add(StopOption(o.getInt("seq"), id, stopMap[id] ?: id))
+                            val meta = stopMap[id]
+                            add(StopOption(o.getInt("seq"), id, meta?.nameTc ?: id, meta?.lat ?: Double.NaN, meta?.lng ?: Double.NaN))
+                            //add(StopOption(o.getInt("seq"), id, stopMap[id] ?: id))
                         }
                     }
                 }
@@ -162,7 +191,14 @@ object BusApi {
                         for (i in 0 until arr.length()) {
                             val o = arr.getJSONObject(i)
                             val id = o.getString("stop").trim()
-                            add(StopOption(o.getInt("seq"), id, ctbStopName(id)))
+                            //New added - start
+                            delay(120)
+                            val data = JSONObject(get("https://rt.data.gov.hk/v2/transport/citybus/stop/$id")).optJSONObject("data")
+                            val name = data?.optString("name_tc") ?: id
+                            val lat = data?.optString("lat")?.toDoubleOrNull() ?: Double.NaN
+                            val lng = data?.optString("long")?.toDoubleOrNull() ?: Double.NaN
+                            ctbStopNames[id] = name
+                            add(StopOption(o.getInt("seq"), id, name, lat, lng))
                         }
                     }
                 }

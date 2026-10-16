@@ -14,11 +14,33 @@ import org.cimiy.busscheduleeta.data.AppDatabase
 import org.cimiy.busscheduleeta.data.BusApi
 import org.cimiy.busscheduleeta.data.FavoriteTrip
 import org.cimiy.busscheduleeta.databinding.ActivityPickStopBinding
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
+import kotlin.math.pow
 
 class PickStopActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPickStopBinding
     private lateinit var adapter: StopAdapter
 
+    private val prefs by lazy { getSharedPreferences("settings", MODE_PRIVATE) }
+    private var baseStops: List<org.cimiy.busscheduleeta.data.StopOption> = emptyList()
+    private val locPermission = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { result ->
+        val ok = result[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        if (ok) trySortByNearby() else keepManualList()
+    }
     companion object {
         private const val MAX_FAVORITES = 12
     }
@@ -85,5 +107,65 @@ class PickStopActivity : AppCompatActivity() {
                 AppToast.show(this@PickStopActivity, "載入失敗：${e.message}", R.drawable.ic_toast_warn)
             }
         }
+    }
+    private fun isAutoLocation() =
+        prefs.getString("location_mode", "manual") == "auto"
+
+    private fun applyStops(list: List<org.cimiy.busscheduleeta.data.StopOption>) {
+        baseStops = list
+        if (!isAutoLocation()) {
+            adapter.submit(list)
+            binding.tvLocationHint.visibility = View.GONE
+            return
+        }
+        val fine = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        val coarse = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+        if (fine == PackageManager.PERMISSION_GRANTED || coarse == PackageManager.PERMISSION_GRANTED) {
+            trySortByNearby()
+        } else {
+            locPermission.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
+    private fun keepManualList() {
+        adapter.submit(baseStops)
+        binding.tvLocationHint.visibility = View.GONE
+    }
+    private fun trySortByNearby() {
+        val loc = lastKnownLocation()
+        if (loc == null) {
+            keepManualList()
+            return
+        }
+        val sorted = baseStops.sortedBy { stop ->
+            if (stop.lat.isNaN() || stop.lng.isNaN()) Double.MAX_VALUE
+            else distanceMeters(loc.latitude, loc.longitude, stop.lat, stop.lng)
+        }
+        adapter.submit(sorted)
+        binding.tvLocationHint.visibility = View.VISIBLE
+    }
+
+    private fun lastKnownLocation(): Location? {
+        val lm = getSystemService(LOCATION_SERVICE) as LocationManager
+        return listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER)
+            .mapNotNull { p ->
+                try { lm.getLastKnownLocation(p) } catch (_: SecurityException) { null }
+            }
+            .maxByOrNull { it.time }
+    }
+    private fun distanceMeters(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val r = 6371000.0
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+        val a = kotlin.math.sin(dLat / 2).pow(2) +
+                kotlin.math.cos(Math.toRadians(lat1)) *
+                kotlin.math.cos(Math.toRadians(lat2)) *
+                kotlin.math.sin(dLon / 2).pow(2)
+        return 2 * r * kotlin.math.asin(kotlin.math.sqrt(a))
     }
 }

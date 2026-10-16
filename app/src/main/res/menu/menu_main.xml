@@ -6,10 +6,12 @@
         android:id="@+id/action_about"
         android:title="@string/about"
         app:showAsAction="never"/>
-
     <item
         android:id="@+id/action_appearance"
         android:title="@string/appearance"
         app:showAsAction="never" />
-
+    <item
+        android:id="@+id/action_location_mode"
+        android:title="@string/location_mode"
+        app:showAsAction="never" />
 </menu>

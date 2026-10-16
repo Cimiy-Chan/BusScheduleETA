@@ -10,4 +10,9 @@
     <string name="theme_dark">深色</string>
     <string name="theme_system">跟隨系統</string>
     <string name="route_search_hint">"輸入路線號碼，例如 104"</string>
+    <string name="location_mode">定位方式</string>
+    <string name="location_manual">手動選擇</string>
+    <string name="location_auto">自動（附近）</string>
+    <string name="location_sorted_nearby">已按附近位置排序</string>
+    <string name="location_permission_needed">需要定位權限才能自動選附近車站</string>
 </resources>

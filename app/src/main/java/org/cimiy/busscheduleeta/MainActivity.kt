@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+
         adapter = FavoriteAdapter(
             onClick = { trip ->
                 startActivity(
@@ -108,6 +109,11 @@ class MainActivity : AppCompatActivity() {
                             showAppearanceDialog()
                             true
                         }
+                        R.id.action_location_mode -> {
+                            showLocationModeDialog()
+                            true
+                        }
+
                         else -> false
                     }
                 }
@@ -159,4 +165,22 @@ class MainActivity : AppCompatActivity() {
             }
             .show()
     }
+
+    private fun showLocationModeDialog() {
+        val labels = arrayOf(
+            getString(R.string.location_manual),
+            getString(R.string.location_auto)
+        )
+        val values = arrayOf("manual", "auto")
+        val current = prefs.getString("location_mode", "manual")
+        val checked = values.indexOf(current).coerceAtLeast(0)
+        AlertDialog.Builder(this)
+            .setTitle(R.string.location_mode)
+            .setSingleChoiceItems(labels, checked) { dialog, which ->
+                prefs.edit().putString("location_mode", values[which]).apply()
+                dialog.dismiss()
+            }
+            .show()
+    }
+
 }
