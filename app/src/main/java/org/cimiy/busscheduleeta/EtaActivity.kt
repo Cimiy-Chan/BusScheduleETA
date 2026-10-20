@@ -166,7 +166,7 @@ class EtaActivity : AppCompatActivity() {
         const val EXTRA_STOP = "stop"
         const val EXTRA_COMPANY = "company"
         const val EXTRA_DIRECTION = "direction"
-        const val EXTRA_SERVICE_TYPE = "service"
+        const val EXTRA_SERVICE_TYPE = "service_type"
         const val EXTRA_STOP_ID = "stop_id"
     }
 }
