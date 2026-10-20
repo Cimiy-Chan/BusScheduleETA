@@ -14,7 +14,7 @@ object AppToast {
         view.findViewById<ImageView>(R.id.ivIcon).setImageResource(icon)
         view.findViewById<TextView>(R.id.tvMessage).text = message
         Toast(context.applicationContext).apply {
-            duration = Toast.LENGTH_SHORT
+            duration = Toast.LENGTH_LONG
             this.view = view
             show()
         }

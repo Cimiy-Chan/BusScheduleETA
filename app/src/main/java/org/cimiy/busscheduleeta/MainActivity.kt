@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import org.cimiy.busscheduleeta.data.FavoriteTrip
 import org.cimiy.busscheduleeta.databinding.ActivityMainBinding
 import android.content.Intent
-import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -18,8 +17,6 @@ import kotlinx.coroutines.launch
 import org.cimiy.busscheduleeta.data.AppDatabase
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatDelegate
 
@@ -30,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: FavoriteAdapter
 
     companion object {
-        private const val MAX_FAVORITE = 12
+        private const val MAX_FAVORITES = 12
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,15 +76,12 @@ class MainActivity : AppCompatActivity() {
         binding.rvFavorites.layoutManager = GridLayoutManager(this, 3)
         binding.rvFavorites.adapter = adapter
 
-        binding.fabAdd.setOnClickListener {
-            startActivity(Intent(this, PickRouteActivity::class.java))
-        }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 AppDatabase.get(this@MainActivity).favoriteDao().all().collect { list ->
                     adapter.submit(list)
                     binding.tvEmpty.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
-                    binding.fabAdd.visibility = if (list.size >= MAX_FAVORITE) View.GONE else View.VISIBLE
+                    binding.fabAdd.visibility = if (list.size >= MAX_FAVORITES) View.GONE else View.VISIBLE
                 }
             }
         }
@@ -109,11 +103,6 @@ class MainActivity : AppCompatActivity() {
                             showAppearanceDialog()
                             true
                         }
-                        R.id.action_location_mode -> {
-                            showLocationModeDialog()
-                            true
-                        }
-
                         else -> false
                     }
                 }
@@ -165,22 +154,4 @@ class MainActivity : AppCompatActivity() {
             }
             .show()
     }
-
-    private fun showLocationModeDialog() {
-        val labels = arrayOf(
-            getString(R.string.location_manual),
-            getString(R.string.location_auto)
-        )
-        val values = arrayOf("manual", "auto")
-        val current = prefs.getString("location_mode", "manual")
-        val checked = values.indexOf(current).coerceAtLeast(0)
-        AlertDialog.Builder(this)
-            .setTitle(R.string.location_mode)
-            .setSingleChoiceItems(labels, checked) { dialog, which ->
-                prefs.edit().putString("location_mode", values[which]).apply()
-                dialog.dismiss()
-            }
-            .show()
-    }
-
 }

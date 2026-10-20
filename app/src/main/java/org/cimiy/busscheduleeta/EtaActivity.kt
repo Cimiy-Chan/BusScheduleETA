@@ -22,10 +22,10 @@ class EtaActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEtaBinding
     private var refreshJob: Job? = null
 
-    private val company by lazy { intent.getStringExtra("company").orEmpty() }
-    private val direction by lazy { intent.getStringExtra("direction").orEmpty() }
-    private val serviceType by lazy { intent.getStringExtra("service_type") ?: "1" }
-    private val stopId by lazy { intent.getStringExtra("stop_id").orEmpty() }
+    private val company by lazy { intent.getStringExtra(EXTRA_COMPANY).orEmpty() }
+    private val direction by lazy { intent.getStringExtra(EXTRA_DIRECTION).orEmpty() }
+    private val serviceType by lazy { intent.getStringExtra(EXTRA_SERVICE_TYPE) ?: "1" }
+    private val stopId by lazy { intent.getStringExtra(EXTRA_STOP_ID).orEmpty() }
     private val routeNo by lazy { intent.getStringExtra(EXTRA_ROUTE).orEmpty() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -164,5 +164,9 @@ class EtaActivity : AppCompatActivity() {
         const val EXTRA_ROUTE = "route"
         const val EXTRA_DEST = "dest"
         const val EXTRA_STOP = "stop"
+        const val EXTRA_COMPANY = "company"
+        const val EXTRA_DIRECTION = "direction"
+        const val EXTRA_SERVICE_TYPE = "service"
+        const val EXTRA_STOP_ID = "stop_id"
     }
 }

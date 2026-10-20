@@ -34,7 +34,6 @@ object BusApi {
 
     @Volatile private var cachedRoutes: List<RouteOption>? = null
     @Volatile private var kmbRouteRaw: JSONArray? = null
-    @Volatile private var kmbStopNames: Map<String, String>? = null
     private val ctbStopNames = HashMap<String, String>()
 
     private fun getOnce(url: String): String =
@@ -122,20 +121,6 @@ object BusApi {
             }
         }
 
-    /*
-    private suspend fun kmbStopsMap(): Map<String, String> {
-        kmbStopNames?.let { return it }
-        val map = HashMap<String, String>()
-        val allStops = JSONObject(get("https://data.etabus.gov.hk/v1/transport/kmb/stop")).arr("data")
-        for (i in 0 until allStops.length()) {
-            val s = allStops.getJSONObject(i)
-            map[s.getString("stop").trim()] = s.optString("name_tc")
-        }
-        kmbStopNames = map
-        return map
-    }
-
-     */
     private data class StopMeta(val nameTc: String, val lat: Double, val lng: Double)
     @Volatile private var kmbStopMeta: Map<String, StopMeta>? = null
 
@@ -155,6 +140,7 @@ object BusApi {
         return map
     }
 
+    /*
     private suspend fun ctbStopName(stopId: String): String {
         ctbStopNames[stopId]?.let { return it }
         delay(120)
@@ -162,7 +148,7 @@ object BusApi {
             .optJSONObject("data")?.optString("name_tc") ?: stopId
         ctbStopNames[stopId] = name
         return name
-    }
+    }*/
 
     suspend fun stops(company: String, route: String, direction: String, serviceType: String): List<StopOption> =
         withContext(Dispatchers.IO) {
@@ -179,7 +165,6 @@ object BusApi {
                             val id = o.getString("stop").trim()
                             val meta = stopMap[id]
                             add(StopOption(o.getInt("seq"), id, meta?.nameTc ?: id, meta?.lat ?: Double.NaN, meta?.lng ?: Double.NaN))
-                            //add(StopOption(o.getInt("seq"), id, stopMap[id] ?: id))
                         }
                     }
                 }
@@ -191,7 +176,6 @@ object BusApi {
                         for (i in 0 until arr.length()) {
                             val o = arr.getJSONObject(i)
                             val id = o.getString("stop").trim()
-                            //New added - start
                             delay(120)
                             val data = JSONObject(get("https://rt.data.gov.hk/v2/transport/citybus/stop/$id")).optJSONObject("data")
                             val name = data?.optString("name_tc") ?: id

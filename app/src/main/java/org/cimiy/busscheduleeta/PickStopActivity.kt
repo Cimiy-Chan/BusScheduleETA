@@ -71,36 +71,9 @@ class PickStopActivity : AppCompatActivity() {
         binding.tvTitle.text = "選擇上車站"
         binding.tvHint.text = "$route 往$dest　正在載入車站…"
         binding.btnBack.setOnClickListener { finish() }
+        binding.btnFindNearest.setOnClickListener { requestNearestStop() }
 
         adapter = StopAdapter { stop -> selectStop(stop)}
-
-            /* lifecycleScope.launch {
-                val dao = AppDatabase.get(this@PickStopActivity).favoriteDao()
-                if (dao.count() >= MAX_FAVORITES) {
-                    Toast.makeText(this@PickStopActivity, "最多只能加 12 個常用行程", Toast.LENGTH_LONG).show()
-                    return@launch
-                }
-                dao.insert(
-                    FavoriteTrip(
-                        company = company,
-                        route = route,
-                        direction = direction,
-                        serviceType = serviceType,
-                        stopId = stop.stopId,
-                        routeLabel = route,
-                        destLabel = dest,
-                        stopLabel = stop.nameTc,
-                        sortOrder = dao.count()
-                    )
-                )
-                AppToast.show(this@PickStopActivity, "已加入常用", R.drawable.ic_toast_ok)
-                startActivity(
-                    Intent(this@PickStopActivity, MainActivity::class.java)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                )
-                finish()
-            } */
-
         binding.rvStops.layoutManager = LinearLayoutManager(this)
         binding.rvStops.adapter = adapter
 
@@ -115,16 +88,14 @@ class PickStopActivity : AppCompatActivity() {
             }
         }
     }
-    private fun isAutoLocation() =
-        prefs.getString("location_mode", "manual") == "auto"
-
     private fun applyStops(list: List<org.cimiy.busscheduleeta.data.StopOption>) {
         baseStops = list
-        if (!isAutoLocation()) {
-            adapter.submit(list)
-            binding.tvLocationHint.visibility = View.GONE
-            return
-        }
+        adapter.submit(list)
+        binding.rvStops.visibility = View.VISIBLE
+        binding.tvLocationHint.visibility = View.GONE
+    }
+
+    private fun requestNearestStop() {
         val fine = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
         val coarse = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
         if (fine == PackageManager.PERMISSION_GRANTED || coarse == PackageManager.PERMISSION_GRANTED) {
@@ -138,8 +109,10 @@ class PickStopActivity : AppCompatActivity() {
             )
         }
     }
-
-    private fun selectStop(stop: org.cimiy.busscheduleeta.data.StopOption) {
+    private fun selectStop(
+        stop: org.cimiy.busscheduleeta.data.StopOption,
+        fromAuto: Boolean = false
+    ) {
         lifecycleScope.launch {
             val dao = AppDatabase.get(this@PickStopActivity).favoriteDao()
             if (dao.count() >= MAX_FAVORITES) {
@@ -160,11 +133,12 @@ class PickStopActivity : AppCompatActivity() {
                     sortOrder = dao.count()
                 )
             )
-            AppToast.show(
-                this@PickStopActivity,
-                getString(R.string.location_auto_selected, stop.nameTc),
-                R.drawable.ic_toast_ok
-            )
+            val msg = if (fromAuto) {
+                getString(R.string.location_auto_selected, stop.nameTc)
+            } else {
+                "已加入常用"
+            }
+            AppToast.show(this@PickStopActivity, msg, R.drawable.ic_toast_ok)
             startActivity(
                 Intent(this@PickStopActivity, MainActivity::class.java)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -172,7 +146,6 @@ class PickStopActivity : AppCompatActivity() {
             finish()
         }
     }
-
     private fun tryAutoSelectNearest() {
         val loc = lastKnownLocation()
         if (loc == null) {
@@ -187,9 +160,10 @@ class PickStopActivity : AppCompatActivity() {
             keepManualList()
             return
         }
+        // 這裡 nearest 已保證非 null
         binding.rvStops.visibility = View.GONE
         binding.tvLocationHint.visibility = View.GONE
-        selectStop(nearest)
+        selectStop(nearest, fromAuto = true)
     }
 
     private fun keepManualList() {

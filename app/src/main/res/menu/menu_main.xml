@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <item
-        android:id="@+id/action_about"
-        android:title="@string/about"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/action_appearance"
-        android:title="@string/appearance"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_location_mode"
-        android:title="@string/location_mode"
-        app:showAsAction="never" />
+    <item android:id="@+id/action_about" android:title="@string/about" app:showAsAction="never"/>
+    <item android:id="@+id/action_appearance" android:title="@string/appearance" app:showAsAction="never"/>
 </menu>

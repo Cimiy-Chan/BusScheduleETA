@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import org.cimiy.busscheduleeta.data.BusCompany
 import org.cimiy.busscheduleeta.data.FavoriteTrip
 import org.cimiy.busscheduleeta.databinding.ItemFavoriteBinding
 
@@ -37,18 +36,6 @@ class FavoriteAdapter(
             b.tvDest.text = "→ ${t.destLabel}"
             b.tvStop.text = t.stopLabel
             b.tvCompany.visibility = View.GONE
-            b.tvRoute.textSize = 36f
-            //val isKmb = t.company == BusCompany.KMB.name
-            //b.tvCompany.text = if (isKmb) "九巴" else "城巴"
-            /*
-            b.tvCompany.setTextColor(
-                ContextCompat.getColor(
-                    b.root.context,
-                    if (isKmb) R.color.kmb_accent else R.color.ctb_accent
-                )
-            )
-
-             */
 
             val colors = intArrayOf(
                 R.color.fav_bg_0, R.color.fav_bg_1, R.color.fav_bg_2,

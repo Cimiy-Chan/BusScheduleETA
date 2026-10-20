@@ -3,7 +3,6 @@ package org.cimiy.busscheduleeta
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -44,12 +43,10 @@ class PickRouteActivity : AppCompatActivity() {
         binding.tvError.visibility = View.GONE
         binding.loadingRoutes.visibility = View.VISIBLE
 
-        //Toast.makeText(this, "正在下載路線…", Toast.LENGTH_SHORT).show()
         lifecycleScope.launch {
             try {
                 adapter.submit(BusApi.allRoutes())
                 binding.tvError.visibility = View.GONE
-                Toast.makeText(this@PickRouteActivity, "可以搜尋路線號碼", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 val full = buildString {
                     append(e.javaClass.simpleName).append("：").append(e.message)

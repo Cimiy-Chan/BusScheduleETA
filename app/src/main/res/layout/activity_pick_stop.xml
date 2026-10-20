@@ -20,19 +20,39 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="返回"
+            android:contentDescription="@string/back"
             android:src="?attr/homeAsUpIndicator"
             app:tint="@color/text_primary" />
 
         <TextView
             android:id="@+id/tvTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="選擇上車站"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/pick_stop_title"
             android:textColor="@color/text_primary"
-            android:textSize="24sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFindNearest"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:contentDescription="@string/find_nearest"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="48dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="@string/find_nearest_short"
+            android:textSize="15sp"
+            app:icon="@drawable/ic_my_location"
+            app:iconGravity="textStart"
+            app:iconPadding="6dp" />
     </LinearLayout>
 
     <TextView
@@ -40,7 +60,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="104 往旺角"
         android:textColor="@color/text_secondary"
         android:textSize="16sp" />
 
@@ -50,10 +69,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:padding="8dp"
-        android:textSize="16sp"
+        android:text="@string/location_sorted_nearby"
         android:textColor="@color/text_secondary"
-        android:visibility="gone"
-        android:text="@string/location_sorted_nearby" />
+        android:textSize="16sp"
+        android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvStops"

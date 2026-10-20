@@ -58,14 +58,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="加入常用巴士"
-        android:src="@android:drawable/ic_input_add"
+        android:layout_margin="8dp"
+        android:contentDescription="@string/find_route"
+        android:text="@string/find_route"
+        android:textColor="@color/white"
+        app:icon="@android:drawable/ic_menu_search"
         app:backgroundTint="@color/accent"
+        app:iconTint="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@android:color/white" />
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
