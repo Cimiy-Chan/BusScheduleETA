@@ -43,10 +43,11 @@ class PickDirectionActivity : AppCompatActivity() {
                 bindDir(binding.btnOutbound, out, "O")
                 bindDir(binding.btnInbound, inn, "I")
                 if (out == null && inn == null) {
-                    Toast.makeText(this@PickDirectionActivity, "找不到方向資料", Toast.LENGTH_LONG).show()
+                    //AppToast(this@PickDirectionActivity, getString(R.string.direction_not_found), R.drawable.ic_toast_warn)
+                    AppToast.show(this@PickDirectionActivity, getString(R.string.direction_not_found), R.drawable.ic_toast_warn)
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@PickDirectionActivity, "載入失敗：${e.message}", Toast.LENGTH_LONG).show()
+                AppToast.show(this@PickDirectionActivity, getString(R.string.load_failed), R.drawable.ic_toast_warn)
                 binding.btnOutbound.text = "載入失敗"
                 binding.btnInbound.visibility = View.GONE
             }

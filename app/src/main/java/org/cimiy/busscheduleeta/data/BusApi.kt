@@ -34,7 +34,6 @@ object BusApi {
 
     @Volatile private var cachedRoutes: List<RouteOption>? = null
     @Volatile private var kmbRouteRaw: JSONArray? = null
-    private val ctbStopNames = HashMap<String, String>()
 
     private fun getOnce(url: String): String =
         client.newCall(Request.Builder().url(url).get().build()).execute().use { resp ->
@@ -140,16 +139,6 @@ object BusApi {
         return map
     }
 
-    /*
-    private suspend fun ctbStopName(stopId: String): String {
-        ctbStopNames[stopId]?.let { return it }
-        delay(120)
-        val name = JSONObject(get("https://rt.data.gov.hk/v2/transport/citybus/stop/$stopId"))
-            .optJSONObject("data")?.optString("name_tc") ?: stopId
-        ctbStopNames[stopId] = name
-        return name
-    }*/
-
     suspend fun stops(company: String, route: String, direction: String, serviceType: String): List<StopOption> =
         withContext(Dispatchers.IO) {
             val dirPath = if (direction == "O") "outbound" else "inbound"
@@ -181,7 +170,6 @@ object BusApi {
                             val name = data?.optString("name_tc") ?: id
                             val lat = data?.optString("lat")?.toDoubleOrNull() ?: Double.NaN
                             val lng = data?.optString("long")?.toDoubleOrNull() ?: Double.NaN
-                            ctbStopNames[id] = name
                             add(StopOption(o.getInt("seq"), id, name, lat, lng))
                         }
                     }

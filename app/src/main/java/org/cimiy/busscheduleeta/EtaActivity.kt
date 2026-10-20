@@ -54,6 +54,7 @@ class EtaActivity : AppCompatActivity() {
     }
 
     override fun onStart() {
+        refreshJob?.cancel()
         super.onStart()
         refreshJob = lifecycleScope.launch {
             while (isActive) {

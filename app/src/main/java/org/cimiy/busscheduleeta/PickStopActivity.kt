@@ -2,7 +2,6 @@ package org.cimiy.busscheduleeta
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -22,10 +21,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
 import kotlin.math.pow
 
 class PickStopActivity : AppCompatActivity() {
@@ -166,22 +161,6 @@ class PickStopActivity : AppCompatActivity() {
         binding.tvLocationHint.visibility = View.GONE
     }
 
-    /*
-    private fun trySortByNearby() {
-        val loc = lastKnownLocation()
-        if (loc == null) {
-            keepManualList()
-            return
-        }
-        val sorted = baseStops.sortedBy { stop ->
-            if (stop.lat.isNaN() || stop.lng.isNaN()) Double.MAX_VALUE
-            else distanceMeters(loc.latitude, loc.longitude, stop.lat, stop.lng)
-        }
-        adapter.submit(sorted)
-        binding.tvLocationHint.visibility = View.VISIBLE
-    }
-
-     */
 
     private fun lastKnownLocation(): Location? {
         val lm = getSystemService(LOCATION_SERVICE) as LocationManager

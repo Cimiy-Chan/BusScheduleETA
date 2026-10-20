@@ -10,7 +10,6 @@
     <string name="theme_dark">深色</string>
     <string name="theme_system">跟隨系統</string>
     <string name="route_search_hint">"輸入路線號碼，例如 104"</string>
-    <string name="location_sorted_nearby">已按附近位置排序</string>
     <string name="location_permission_needed">需要定位權限才能自動選附近車站</string>
     <string name="location_auto_selected">已自動選擇附近車站：%1$s</string>
     <string name="routes_loading">正在載入路線資料，請稍候…</string>
@@ -25,6 +24,8 @@
     <string name="load_failed">載入失敗…</string>
     <string name="delete_favorite_title">刪除常用行程？</string>
     <string name="delete">刪除</string>
+    <string name="direction_not_found">找不到方向資料</string>
     <string name="stop_pick_up">上車站：…</string>
+    <string name="location_sorted_nearby">附近位置</string>
 
 </resources>
