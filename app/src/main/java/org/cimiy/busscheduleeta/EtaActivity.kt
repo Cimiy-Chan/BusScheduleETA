@@ -46,7 +46,7 @@ class EtaActivity : AppCompatActivity() {
         // 先清掉版面預設的「3 分鐘」，避免閃一下
         binding.tvMinutes.text = "--"
         binding.tvMinutesUnit.text = "分鐘"
-        binding.tvClock.text = "載入中…"
+        binding.tvClock.text = getString(R.string.loading)
         binding.tvSecond.text = ""
         binding.tvThird.text = ""
         binding.tvRemark.visibility = View.GONE

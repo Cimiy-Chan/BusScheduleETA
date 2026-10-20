@@ -34,8 +34,8 @@ class PickDirectionActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener { finish() }
         binding.btnOutbound.isEnabled = false
         binding.btnInbound.isEnabled = false
-        binding.btnOutbound.text = "載入中…"
-        binding.btnInbound.text = "載入中…"
+        binding.btnOutbound.text = getString(R.string.loading)
+        binding.btnInbound.text = getString(R.string.loading)
 
         lifecycleScope.launch {
             try {

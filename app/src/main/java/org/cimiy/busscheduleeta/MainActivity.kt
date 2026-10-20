@@ -20,15 +20,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatDelegate
 
-
-
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: FavoriteAdapter
-
-    companion object {
-        private const val MAX_FAVORITES = 12
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,10 +44,10 @@ class MainActivity : AppCompatActivity() {
                         .putExtra(EtaActivity.EXTRA_ROUTE, trip.routeLabel)
                         .putExtra(EtaActivity.EXTRA_DEST, trip.destLabel)
                         .putExtra(EtaActivity.EXTRA_STOP, trip.stopLabel)
-                        .putExtra("company", trip.company)
-                        .putExtra("direction", trip.direction)
-                        .putExtra("service_type", trip.serviceType)
-                        .putExtra("stop_id", trip.stopId)
+                        .putExtra(EtaActivity.EXTRA_COMPANY, trip.company)
+                        .putExtra(EtaActivity.EXTRA_DIRECTION, trip.direction)
+                        .putExtra(EtaActivity.EXTRA_SERVICE_TYPE, trip.serviceType)
+                        .putExtra(EtaActivity.EXTRA_STOP_ID, trip.stopId)
                 )
             },
             onLongClick = { trip ->
@@ -81,7 +75,7 @@ class MainActivity : AppCompatActivity() {
                 AppDatabase.get(this@MainActivity).favoriteDao().all().collect { list ->
                     adapter.submit(list)
                     binding.tvEmpty.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
-                    binding.fabAdd.visibility = if (list.size >= MAX_FAVORITES) View.GONE else View.VISIBLE
+                    binding.fabAdd.visibility = if (list.size >= AppConstants.MAX_FAVORITES) View.GONE else View.VISIBLE
                 }
             }
         }

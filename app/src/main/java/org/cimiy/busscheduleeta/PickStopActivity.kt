@@ -31,8 +31,6 @@ import kotlin.math.pow
 class PickStopActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPickStopBinding
     private lateinit var adapter: StopAdapter
-
-    private val prefs by lazy { getSharedPreferences("settings", MODE_PRIVATE) }
     private var baseStops: List<org.cimiy.busscheduleeta.data.StopOption> = emptyList()
     private val locPermission = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -47,9 +45,6 @@ class PickStopActivity : AppCompatActivity() {
     private var direction = ""
     private var serviceType = "1"
     private var dest = ""
-    companion object {
-        private const val MAX_FAVORITES = 12
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,8 +110,8 @@ class PickStopActivity : AppCompatActivity() {
     ) {
         lifecycleScope.launch {
             val dao = AppDatabase.get(this@PickStopActivity).favoriteDao()
-            if (dao.count() >= MAX_FAVORITES) {
-                Toast.makeText(this@PickStopActivity, getString(R.string.favorites_full), Toast.LENGTH_LONG).show()
+            if (dao.count() >= AppConstants.MAX_FAVORITES) {
+                AppToast.show(this@PickStopActivity, getString(R.string.favorites_full), R.drawable.ic_toast_warn)
                 keepManualList()
                 return@launch
             }
@@ -136,7 +131,7 @@ class PickStopActivity : AppCompatActivity() {
             val msg = if (fromAuto) {
                 getString(R.string.location_auto_selected, stop.nameTc)
             } else {
-                "已加入常用"
+                getString(R.string.added_favorite)
             }
             AppToast.show(this@PickStopActivity, msg, R.drawable.ic_toast_ok)
             startActivity(
