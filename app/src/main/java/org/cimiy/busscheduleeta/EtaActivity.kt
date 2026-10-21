@@ -44,8 +44,8 @@ class EtaActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener { finish() }
 
         // 先清掉版面預設的「3 分鐘」，避免閃一下
-        binding.tvMinutes.text = "--"
-        binding.tvMinutesUnit.text = "分鐘"
+        binding.tvMinutes.text = getString(R.string.double_dash)
+        binding.tvMinutesUnit.text = getString(R.string.min_unit)
         binding.tvClock.text = getString(R.string.loading)
         binding.tvSecond.text = ""
         binding.tvThird.text = ""
@@ -81,8 +81,8 @@ class EtaActivity : AppCompatActivity() {
             runOnUiThread { render(list) }
         } catch (e: Exception) {
             runOnUiThread {
-                showMessage("請檢查網絡\n${e.message}")
-                binding.tvUpdated.text = "最後更新：失敗"
+                showMessage(getString(R.string.check_network) + "\n${e.message}")
+                binding.tvUpdated.text = getString(R.string.last_update_fail)
             }
         }
     }
@@ -91,7 +91,7 @@ class EtaActivity : AppCompatActivity() {
         val now = System.currentTimeMillis()
         val clock = SimpleDateFormat("HH:mm", Locale.US)
         val stamp = SimpleDateFormat("HH:mm:ss", Locale.US)
-        binding.tvUpdated.text = "最後更新：${stamp.format(Date())}"
+        binding.tvUpdated.text = getString(R.string.last_update) + "${stamp.format(Date())}"
 
         val valid = list.filter { it.etaMillis != null && it.etaMillis!! >= now - 60_000 }
         if (valid.isEmpty()) {

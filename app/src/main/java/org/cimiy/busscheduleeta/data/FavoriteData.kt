@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
-enum class BusCompany { KMB, CTB }
-
 @Entity(tableName = "favorites")
 data class FavoriteTrip(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,

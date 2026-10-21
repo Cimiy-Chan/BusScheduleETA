@@ -25,7 +25,7 @@
             android:id="@+id/tvCompany"
             android:layout_width="48dp"
             android:layout_height="wrap_content"
-            android:text="九巴"
+            android:text="@string/kmb"
             android:textColor="@color/kmb_accent"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -34,7 +34,7 @@
             android:id="@+id/tvRoute"
             android:layout_width="72dp"
             android:layout_height="wrap_content"
-            android:text="104"
+            android:text="@string/num_104"
             android:textColor="@color/text_primary"
             android:textSize="22sp"
             android:textStyle="bold"/>
@@ -44,7 +44,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="華貴邨 ↔ 九龍灣"
+            android:text="@string/wke_kb"
             android:textColor="@color/text_primary"
             android:textSize="16sp" />
     </LinearLayout>

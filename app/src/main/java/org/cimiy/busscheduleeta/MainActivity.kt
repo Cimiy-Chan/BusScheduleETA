@@ -115,11 +115,11 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
     private val prefs by lazy {
-        getSharedPreferences("settings", MODE_PRIVATE)
+        getSharedPreferences(AppConstants.PREFS_SETTINGS, MODE_PRIVATE)
     }
 
     private fun applySavedTheme() {
-        val mode = prefs.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        val mode = prefs.getInt(AppConstants.KEY_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         AppCompatDelegate.setDefaultNightMode(mode)
     }
 

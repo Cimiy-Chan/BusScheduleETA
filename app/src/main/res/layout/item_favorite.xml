@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:text="九巴"
+            android:text="@string/kmb"
             android:textColor="@color/kmb_accent"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="104"
+            android:text="@string/num_104"
             android:textColor="@color/fav_card_text"
             android:textSize="40sp"
             android:textStyle="bold" />
@@ -49,7 +49,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
-            android:text="→ 旺角"
+            android:text="@string/arrow_to_mk"
             android:textColor="@color/fav_card_text"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -62,7 +62,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
-            android:text="彌敦道"
+            android:text="@string/st_nathan_road"
             android:textColor="@color/fav_card_text"
             android:textSize="13sp" />
     </LinearLayout>

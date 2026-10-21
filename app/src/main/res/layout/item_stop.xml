@@ -24,7 +24,7 @@
             android:id="@+id/tvSeq"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:text="1"
+            android:text="@string/num_1"
             android:textColor="@color/text_secondary"
             android:textSize="18sp" />
 
@@ -33,7 +33,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="彌敦道"
+            android:text="@string/st_nathan_road"
             android:textColor="@color/text_primary"
             android:textSize="20sp"
             android:textStyle="bold" />

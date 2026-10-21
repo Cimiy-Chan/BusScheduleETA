@@ -20,7 +20,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="返回"
+            android:contentDescription="@string/go_back"
             android:src="?attr/homeAsUpIndicator"
             app:tint="@color/icon_tint" />
 
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="選擇路線"
+            android:text="@string/select_route"
             android:textColor="@color/text_primary"
             android:tint="@color/icon_tint"
             android:textSize="24sp"
