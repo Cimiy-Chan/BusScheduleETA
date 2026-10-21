@@ -52,10 +52,10 @@ class MainActivity : AppCompatActivity() {
             },
             onLongClick = { trip ->
                 MaterialAlertDialogBuilder(this)
-                    .setTitle("刪除常用行程？")
+                    .setTitle(getString(R.string.delete_favorite_title))
                     .setMessage("${trip.routeLabel} 往${trip.destLabel}\n上車站：${trip.stopLabel}")
-                    .setNegativeButton("取消", null)
-                    .setPositiveButton("刪除") { _, _ ->
+                    .setNegativeButton(getString(R.string.cancel), null)
+                    .setPositiveButton(getString(R.string.delete)) { _, _ ->
                         lifecycleScope.launch {
                             AppDatabase.get(this@MainActivity).favoriteDao().delete(trip)
                         }

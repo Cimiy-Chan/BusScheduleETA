@@ -42,7 +42,6 @@ class PickDirectionActivity : AppCompatActivity() {
                 bindDir(binding.btnOutbound, out, "O")
                 bindDir(binding.btnInbound, inn, "I")
                 if (out == null && inn == null) {
-                    //AppToast(this@PickDirectionActivity, getString(R.string.direction_not_found), R.drawable.ic_toast_warn)
                     AppToast.show(this@PickDirectionActivity, getString(R.string.direction_not_found), R.drawable.ic_toast_warn)
                 }
             } catch (e: Exception) {

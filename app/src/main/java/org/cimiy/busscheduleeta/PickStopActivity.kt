@@ -58,8 +58,8 @@ class PickStopActivity : AppCompatActivity() {
         serviceType = intent.getStringExtra(PickDirectionActivity.EXTRA_SERVICE_TYPE) ?: "1"
         dest = intent.getStringExtra(PickDirectionActivity.EXTRA_DEST).orEmpty()
 
-        binding.tvTitle.text = "選擇上車站"
-        binding.tvHint.text = "$route 往$dest　正在載入車站…"
+        binding.tvTitle.text = getString(R.string.pick_stop_title)
+        binding.tvHint.text = "$route 往$dest　" + getString(R.string.loading_stop)
         binding.btnBack.setOnClickListener { finish() }
         binding.btnFindNearest.setOnClickListener { requestNearestStop() }
 
@@ -73,8 +73,8 @@ class PickStopActivity : AppCompatActivity() {
                 applyStops(list)
                 binding.tvHint.text = "$route 往$dest　共 ${list.size} 個站"
             } catch (e: Exception) {
-                binding.tvHint.text = "載入失敗：${e.message}"
-                AppToast.show(this@PickStopActivity, "載入失敗：${e.message}", R.drawable.ic_toast_warn)
+                binding.tvHint.text = getString(R.string.load_failed) +  "${e.message}"
+                AppToast.show(this@PickStopActivity,   getString(R.string.load_failed) +"${e.message}", R.drawable.ic_toast_warn)
             }
         }
     }

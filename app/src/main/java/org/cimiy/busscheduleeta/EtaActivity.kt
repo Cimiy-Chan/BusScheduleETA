@@ -40,7 +40,7 @@ class EtaActivity : AppCompatActivity() {
         }
 
         binding.tvRouteTitle.text = "$routeNo 往${intent.getStringExtra(EXTRA_DEST).orEmpty()}"
-        binding.tvStopName.text = "上車站：${intent.getStringExtra(EXTRA_STOP).orEmpty()}"
+        binding.tvStopName.text = getString(R.string.pickup_no_three_dots) +  "${intent.getStringExtra(EXTRA_STOP).orEmpty()}"
         binding.btnBack.setOnClickListener { finish() }
 
         // 先清掉版面預設的「3 分鐘」，避免閃一下
@@ -97,7 +97,7 @@ class EtaActivity : AppCompatActivity() {
         if (valid.isEmpty()) {
             // 備註不可當作主訊息（「原定班次」只是說明）
             val remark = list.firstOrNull { it.remark.isNotBlank() }?.remark
-            showMessage("暫時沒有班次資料")
+            showMessage(getString(R.string.no_next_bus_info))
             if (!remark.isNullOrBlank()) {
                 binding.tvRemark.text = remark
                 binding.tvRemark.visibility = View.VISIBLE
@@ -114,12 +114,12 @@ class EtaActivity : AppCompatActivity() {
 
         fun rowLabel(ms: Long): String {
             val m = ((ms - now) / 60_000L).toInt()
-            return if (m < 1) "即將到站" else "$m 分鐘"
+            return if (m < 1) getString(R.string.arrive_stop) else "$m " + getString(R.string.min_unit)
         }
 
         val firstMs = valid[0].etaMillis!!
         if (firstMs - now < 60_000) {
-            binding.tvMinutes.text = "即將到站"
+            binding.tvMinutes.text = getString(R.string.arrive_stop)
             binding.tvMinutes.textSize = 40f
             binding.tvMinutesUnit.visibility = View.GONE
         } else {

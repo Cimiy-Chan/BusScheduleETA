@@ -33,12 +33,10 @@
     <string name="no_next_bus_info">暫時沒有班次資料</string>
     <string name="last_update_dash">最後更新：—</string>
     <string name="last_update_fail">最後更新：失敗</string>
-    <string name="last_update">最後更新</string>
-    <string name="go_back">返回</string>
+    <string name="last_update">最後更新:</string>
     <string name="mk_104">104 往旺角</string>
     <string name="pickup_nathan_road">上車站：彌敦道</string>
     <string name="home_page_title">快速巴士路線搜尋服務</string>
-    <string name="add_favorite">按右下角 ＋\n加入常用巴士</string>
     <string name="direction_selection_104">104　選擇方向</string>
     <string name="to_mk">往 旺角</string>
     <string name="to_wke">往 華貴邨</string>
@@ -50,6 +48,9 @@
     <string name="st_nathan_road">彌敦道</string>
     <string name="wke_kb">華貴邨 ↔ 九龍灣</string>
     <string name="check_network">請檢查網絡</string>
-
+    <string name="loading_stop">正在載入車站…</string>
+    <string name="pickup_no_three_dots">上車站：</string>
+    <string name="arrive_stop">即將到站</string>
+    <string name="cancel">刪除</string>
 
 </resources>

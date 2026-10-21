@@ -20,7 +20,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/go_back"
+            android:contentDescription="@string/back"
             android:src="?attr/homeAsUpIndicator"
             app:tint="@color/text_primary" />
 
