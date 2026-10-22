@@ -128,7 +128,7 @@ class EtaActivity : AppCompatActivity() {
             binding.tvMinutesUnit.visibility = View.VISIBLE
             binding.tvMinutesUnit.text = "分鐘"
         }
-        binding.tvClock.text = "約 ${clock.format(Date(firstMs))}"
+        binding.tvClock.text = getString(R.string.approx) + " ${clock.format(Date(firstMs))}"
         val remark = valid[0].remark
         binding.tvRemark.text = remark
         binding.tvRemark.visibility = if (remark.isBlank()) View.GONE else View.VISIBLE
@@ -136,12 +136,12 @@ class EtaActivity : AppCompatActivity() {
         binding.tvSecond.visibility = if (valid.size >= 2) View.VISIBLE else View.GONE
         if (valid.size >= 2) {
             val ms = valid[1].etaMillis!!
-            binding.tvSecond.text = "第 2 班　${rowLabel(ms)}　約 ${clock.format(Date(ms))}"
+            binding.tvSecond.text = getString(R.string.second_bus) + " ${rowLabel(ms)}　約 ${clock.format(Date(ms))}"
         }
         binding.tvThird.visibility = if (valid.size >= 3) View.VISIBLE else View.GONE
         if (valid.size >= 3) {
             val ms = valid[2].etaMillis!!
-            binding.tvThird.text = "第 3 班　${rowLabel(ms)}　約 ${clock.format(Date(ms))}"
+            binding.tvThird.text = getString(R.string.third_bus) +  " ${rowLabel(ms)}　約 ${clock.format(Date(ms))}"
         }
     }
 

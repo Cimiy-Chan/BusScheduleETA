@@ -29,7 +29,7 @@ class PickDirectionActivity : AppCompatActivity() {
 
         val company = intent.getStringExtra(PickRouteActivity.EXTRA_COMPANY).orEmpty()
         val route = intent.getStringExtra(PickRouteActivity.EXTRA_ROUTE).orEmpty()
-        binding.tvTitle.text = "$route　選擇方向"
+        binding.tvTitle.text = "$route　" + getString(R.string.direction_selection)
         binding.btnBack.setOnClickListener { finish() }
         binding.btnOutbound.isEnabled = false
         binding.btnInbound.isEnabled = false
@@ -46,7 +46,7 @@ class PickDirectionActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 AppToast.show(this@PickDirectionActivity, getString(R.string.load_failed), R.drawable.ic_toast_warn)
-                binding.btnOutbound.text = "載入失敗"
+                binding.btnOutbound.text = getString(R.string.load_failed)
                 binding.btnInbound.visibility = View.GONE
             }
         }

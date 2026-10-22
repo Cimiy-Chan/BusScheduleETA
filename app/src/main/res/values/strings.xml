@@ -51,6 +51,10 @@
     <string name="loading_stop">正在載入車站…</string>
     <string name="pickup_no_three_dots">上車站：</string>
     <string name="arrive_stop">即將到站</string>
-    <string name="cancel">刪除</string>
+    <string name="cancel">取消</string>
+    <string name="approx">約</string>
+    <string name="second_bus">第 2 班</string>
+    <string name="third_bus">第 3 班</string>
+    <string name="direction_selection">選擇方向</string>
 
 </resources>

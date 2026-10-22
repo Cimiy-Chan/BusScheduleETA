@@ -134,14 +134,14 @@ class MainActivity : AppCompatActivity() {
             AppCompatDelegate.MODE_NIGHT_YES,
             AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         )
-        val current = prefs.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        val current = prefs.getInt(AppConstants.KEY_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         val checked = modes.indexOf(current).coerceAtLeast(0)
 
         AlertDialog.Builder(this)
             .setTitle(R.string.appearance)
             .setSingleChoiceItems(labels, checked) { dialog, which ->
                 val mode = modes[which]
-                prefs.edit().putInt("night_mode", mode).apply()
+                prefs.edit().putInt(AppConstants.KEY_NIGHT_MODE, mode).apply()
                 AppCompatDelegate.setDefaultNightMode(mode)
                 dialog.dismiss()
                 recreate()
