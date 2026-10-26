@@ -129,9 +129,19 @@ class PickStopActivity : AppCompatActivity() {
                 getString(R.string.added_favorite)
             }
             AppToast.show(this@PickStopActivity, msg, R.drawable.ic_toast_ok)
+            // 清掉選線／方向／選站堆疊回到 Main，並請 Main 立刻開 ETA；
+            // 使用者按 ETA 返回鍵時，首頁收藏卡已就緒。
             startActivity(
                 Intent(this@PickStopActivity, MainActivity::class.java)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    .putExtra(MainActivity.EXTRA_OPEN_ETA, true)
+                    .putExtra(EtaActivity.EXTRA_ROUTE, route)
+                    .putExtra(EtaActivity.EXTRA_DEST, dest)
+                    .putExtra(EtaActivity.EXTRA_STOP, stop.nameTc)
+                    .putExtra(EtaActivity.EXTRA_COMPANY, company)
+                    .putExtra(EtaActivity.EXTRA_DIRECTION, direction)
+                    .putExtra(EtaActivity.EXTRA_SERVICE_TYPE, serviceType)
+                    .putExtra(EtaActivity.EXTRA_STOP_ID, stop.stopId)
             )
             finish()
         }

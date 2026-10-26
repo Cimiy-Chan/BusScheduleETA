@@ -104,6 +104,32 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        maybeLaunchEtaFromIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        maybeLaunchEtaFromIntent(intent)
+    }
+
+    /** 選站流程結束後由 PickStop 帶 EXTRA_OPEN_ETA 回來，立刻顯示該站 ETA。 */
+    private fun maybeLaunchEtaFromIntent(intent: Intent?) {
+        if (intent?.getBooleanExtra(EXTRA_OPEN_ETA, false) != true) return
+        intent.removeExtra(EXTRA_OPEN_ETA)
+        startActivity(
+            Intent(this, EtaActivity::class.java)
+                .putExtra(EtaActivity.EXTRA_ROUTE, intent.getStringExtra(EtaActivity.EXTRA_ROUTE))
+                .putExtra(EtaActivity.EXTRA_DEST, intent.getStringExtra(EtaActivity.EXTRA_DEST))
+                .putExtra(EtaActivity.EXTRA_STOP, intent.getStringExtra(EtaActivity.EXTRA_STOP))
+                .putExtra(EtaActivity.EXTRA_COMPANY, intent.getStringExtra(EtaActivity.EXTRA_COMPANY))
+                .putExtra(EtaActivity.EXTRA_DIRECTION, intent.getStringExtra(EtaActivity.EXTRA_DIRECTION))
+                .putExtra(
+                    EtaActivity.EXTRA_SERVICE_TYPE,
+                    intent.getStringExtra(EtaActivity.EXTRA_SERVICE_TYPE) ?: "1"
+                )
+                .putExtra(EtaActivity.EXTRA_STOP_ID, intent.getStringExtra(EtaActivity.EXTRA_STOP_ID))
+        )
     }
 
     private fun showAboutDialog() {
@@ -147,5 +173,10 @@ class MainActivity : AppCompatActivity() {
                 recreate()
             }
             .show()
+    }
+
+    companion object {
+        /** PickStop 選完站後要求首頁立刻開 ETA */
+        const val EXTRA_OPEN_ETA = "open_eta"
     }
 }
