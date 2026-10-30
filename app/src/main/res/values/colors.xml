@@ -26,4 +26,6 @@
     <color name="page_bg">#FFF5F5F5</color>
     <color name="icon_tint">#FF212121</color>
     <color name="fav_card_text">#FF212121</color>
+    <color name="delete_zone_bg">#FFE53935</color>
+    <color name="delete_zone_bg_active">#FFC62828</color>
 </resources>

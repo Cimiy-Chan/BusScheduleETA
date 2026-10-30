@@ -1,0 +1,11 @@
+Hi , I have received some feedback from customers about the BusScheduleETS project.
+They want to change some operation to enhance the user experience (UX)
+
+Modifications:-
+1. At home page the favourite stop cards can be free relocated within the card area. That means, if we have five stop cards here, then we can free move those five cards out of this five-card area on long click and hold to move.
+2. For deleting the stop card, we can do it either:-
+    a. On long click and hold, a trash icon or "x - Delete" icon appear at the bottom center of screen, the user can free move to operate as item 1 or, delete the stop card by moving it to trash icon.
+    b. At the setting menu (3-dot), add a function "Delete", when we enter, there is a small "-" sign appearing at the right bottom corner at each stop card, the user click the stop card, confirmed and deleted.
+
+You may reference to GH id = 5964f1724824778740457c48faf71ccb988ef56e and work together with
+

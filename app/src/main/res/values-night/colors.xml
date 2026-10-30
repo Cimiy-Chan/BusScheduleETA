@@ -9,4 +9,6 @@
     <color name="icon_tint">#FFFFFFFF</color>
     <color name="eta_bg">#FF1A2332</color>
     <color name="fav_card_text">#FF212121</color>
+    <color name="delete_zone_bg">#FFE53935</color>
+    <color name="delete_zone_bg_active">#FFC62828</color>
 </resources>
