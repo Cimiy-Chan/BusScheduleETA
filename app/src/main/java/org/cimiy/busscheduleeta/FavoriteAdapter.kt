@@ -84,6 +84,19 @@ class FavoriteAdapter(
         return ordered
     }
 
+    /**
+     * 確認刪除：以拖曳前 snapshot 為準移除該項。
+     * 勿先 restore 再等 Flow，避免卡片瞬間閃回原位。
+     */
+    fun finishDragCommitDelete(trip: FavoriteTrip) {
+        val base = dragSnapshot ?: items.toList()
+        items = base.filter { it.id != trip.id }.toMutableList()
+        pendingOrderIds = items.map { it.id }
+        dragging = false
+        dragSnapshot = null
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount() = items.size
 
     override fun getItemId(position: Int): Long =

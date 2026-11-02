@@ -44,6 +44,14 @@ class MainActivity : AppCompatActivity() {
     private var fabWasInteractiveBeforeDrag: Boolean = true
     private var dragStartAdapterPosition: Int = RecyclerView.NO_POSITION
 
+    /** 已投進刪除區、等確認對話框；期間卡片／刪除區保持半透明停駐 */
+    private var deleteConfirmPending: Boolean = false
+    private var heldDeleteItemView: View? = null
+    private var heldDeleteTrip: FavoriteTrip? = null
+    /** 拖曳中最後一次 active 的 dX/dY；用來蓋掉 ItemTouchHelper 鬆手後的 recover→(0,0) */
+    private var lastActiveDragDx: Float = 0f
+    private var lastActiveDragDy: Float = 0f
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -164,10 +172,26 @@ class MainActivity : AppCompatActivity() {
                     ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
             0
         ) {
-            override fun isLongPressDragEnabled(): Boolean = true
+            override fun isLongPressDragEnabled(): Boolean = !deleteConfirmPending
             override fun isItemViewSwipeEnabled(): Boolean = false
 
             override fun getMoveThreshold(viewHolder: RecyclerView.ViewHolder): Float = 0.2f
+
+            /**
+             * 投進刪除區時略過 recover 動畫（預設會把卡拉回 0,0），
+             * 否則 clearView 時卡已不在垃圾桶上。
+             */
+            override fun getAnimationDuration(
+                recyclerView: RecyclerView,
+                animationType: Int,
+                animateDx: Float,
+                animateDy: Float
+            ): Long {
+                if (droppedOnDeleteZone || deleteConfirmPending) return 0L
+                return super.getAnimationDuration(
+                    recyclerView, animationType, animateDx, animateDy
+                )
+            }
 
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -185,8 +209,11 @@ class MainActivity : AppCompatActivity() {
             override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
                 when (actionState) {
                     ItemTouchHelper.ACTION_STATE_DRAG -> {
+                        if (deleteConfirmPending) return
                         viewHolder?.itemView?.isPressed = false
                         droppedOnDeleteZone = false
+                        lastActiveDragDx = 0f
+                        lastActiveDragDy = 0f
                         dragStartAdapterPosition = viewHolder?.bindingAdapterPosition
                             ?: RecyclerView.NO_POSITION
                         pendingDeleteTrip = dragStartAdapterPosition
@@ -211,10 +238,18 @@ class MainActivity : AppCompatActivity() {
                 val toDelete = pendingDeleteTrip
                 val startPos = dragStartAdapterPosition
 
-                // 投刪除區：略過換位補位，避免還原／重排蓋掉刪除路徑
-                if (!overDelete) {
-                    reconcileDropIfNeeded(recyclerView, viewHolder, startPos)
+                pendingDeleteTrip = null
+                droppedOnDeleteZone = false
+                dragStartAdapterPosition = RecyclerView.NO_POSITION
+
+                // UX：投進刪除區後卡片停在重疊處、雙方維持半透明，等確認框
+                if (overDelete && toDelete != null) {
+                    holdDeleteDropForConfirm(viewHolder.itemView, toDelete)
+                    confirmDeleteFavorite(toDelete)
+                    return
                 }
+
+                reconcileDropIfNeeded(recyclerView, viewHolder, startPos)
 
                 viewHolder.itemView.translationX = 0f
                 viewHolder.itemView.translationY = 0f
@@ -223,30 +258,16 @@ class MainActivity : AppCompatActivity() {
                 viewHolder.itemView.alpha = 1f
                 resetDragCardElevation(viewHolder.itemView)
 
-                val ordered = adapter.finishDrag(droppedOnDelete = overDelete)
-                pendingDeleteTrip = null
-                droppedOnDeleteZone = false
-                dragStartAdapterPosition = RecyclerView.NO_POSITION
+                val ordered = adapter.finishDrag(droppedOnDelete = false)
 
                 hideDeleteZone()
                 setDeleteZoneHovered(false)
+                restoreFavoritesItemAnimator(recyclerView)
 
-                if (overDelete && toDelete != null) {
-                    confirmDeleteFavorite(toDelete)
-                } else if (ordered != null) {
+                if (ordered != null) {
                     lifecycleScope.launch {
                         AppDatabase.get(this@MainActivity)
                             .persistFavoriteSortOrders(ordered)
-                    }
-                }
-
-                val pendingAnimator = favoritesItemAnimator
-                if (pendingAnimator != null) {
-                    favoritesItemAnimator = null
-                    recyclerView.post {
-                        if (recyclerView.itemAnimator == null) {
-                            recyclerView.itemAnimator = pendingAnimator
-                        }
                     }
                 }
             }
@@ -261,16 +282,25 @@ class MainActivity : AppCompatActivity() {
                 isCurrentlyActive: Boolean
             ) {
                 if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
-                    viewHolder.itemView.translationX = dX
-                    viewHolder.itemView.translationY = dY
                     applyDragCardElevation(viewHolder.itemView)
-
-                    val over = isViewOverDeleteZone(viewHolder.itemView)
                     if (isCurrentlyActive) {
+                        lastActiveDragDx = dX
+                        lastActiveDragDy = dY
+                        viewHolder.itemView.translationX = dX
+                        viewHolder.itemView.translationY = dY
+                        val over = isViewOverDeleteZone(viewHolder.itemView)
                         droppedOnDeleteZone = over
+                        applyDeleteOverlapStyle(viewHolder.itemView, over)
+                    } else if (droppedOnDeleteZone || deleteConfirmPending) {
+                        // 蓋掉 ItemTouchHelper recover→(0,0)：維持鬆手前疊在垃圾桶的位置
+                        viewHolder.itemView.translationX = lastActiveDragDx
+                        viewHolder.itemView.translationY = lastActiveDragDy
+                        applyDeleteOverlapStyle(viewHolder.itemView, true)
+                    } else {
+                        viewHolder.itemView.translationX = dX
+                        viewHolder.itemView.translationY = dY
+                        applyDeleteOverlapStyle(viewHolder.itemView, false)
                     }
-                    // 疊上刪除區：卡＋區半透明，提示即將刪除
-                    applyDeleteOverlapStyle(viewHolder.itemView, over)
                 } else {
                     super.onChildDraw(
                         c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive
@@ -527,6 +557,43 @@ class MainActivity : AppCompatActivity() {
         return zoneRect.contains(cx, cy) || zoneRect.contains(cx, cyLower)
     }
 
+    /**
+     * 鬆手落在刪除區：不要 clear translation／alpha、不要藏刪除區。
+     * 保持卡＋區半透明停駐，等確認對話框。
+     */
+    private fun holdDeleteDropForConfirm(itemView: View, trip: FavoriteTrip) {
+        deleteConfirmPending = true
+        heldDeleteItemView = itemView
+        heldDeleteTrip = trip
+
+        itemView.animate().cancel()
+        // 明確停在鬆手前位置（防 recover／clearView 時序把卡拉回）
+        itemView.translationX = lastActiveDragDx
+        itemView.translationY = lastActiveDragDy
+        itemView.scaleX = 1f
+        itemView.scaleY = 1f
+        itemView.alpha = DRAG_CARD_DELETE_OVERLAP_ALPHA
+        applyDragCardElevation(itemView)
+
+        freezeDeleteZoneForConfirm()
+        // 仍保持 adapter.dragging=true，擋住 Flow submit，且尚未 restore／finishDrag
+    }
+
+    private fun freezeDeleteZoneForConfirm() {
+        zoneAnimator?.cancel()
+        val zone = binding.deleteZone
+        zone.animate().cancel()
+        deleteZoneRevealed = true
+        zoneHovered = true
+        zone.visibility = View.VISIBLE
+        zone.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+        zone.setBackgroundResource(R.drawable.bg_delete_zone_active)
+        zone.translationY = 0f
+        zone.alpha = DELETE_ZONE_OVERLAP_ALPHA
+        zone.scaleX = 1.05f
+        zone.scaleY = 1.05f
+    }
+
     private fun confirmDeleteFavorite(trip: FavoriteTrip) {
         val title = getString(
             R.string.confirm_delete_favorite,
@@ -534,10 +601,17 @@ class MainActivity : AppCompatActivity() {
         )
         MaterialAlertDialogBuilder(this)
             .setMessage(title)
-            .setNegativeButton(getString(R.string.cancel), null)
+            .setCancelable(true)
+            .setNegativeButton(getString(R.string.cancel)) { _, _ ->
+                // 實際還原在 OnDismiss（含系統返回／點外面）
+            }
             .setPositiveButton(getString(R.string.delete)) { _, _ ->
-                lifecycleScope.launch {
-                    AppDatabase.get(this@MainActivity).favoriteDao().delete(trip)
+                commitHeldDelete(trip)
+            }
+            .setOnDismissListener {
+                // 未確認刪除（取消／返回／點外面）→ 卡回原位
+                if (deleteConfirmPending) {
+                    cancelHeldDelete()
                 }
             }
             .show()
@@ -545,6 +619,134 @@ class MainActivity : AppCompatActivity() {
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                     ?.setTextColor(ContextCompat.getColor(this, R.color.error_text))
             }
+    }
+
+    /** 確認刪除：立刻清視覺，自列表移除，再寫 DB */
+    private fun commitHeldDelete(trip: FavoriteTrip) {
+        if (!deleteConfirmPending) return
+        deleteConfirmPending = false
+        val itemView = heldDeleteItemView
+        heldDeleteItemView = null
+        heldDeleteTrip = null
+
+        itemView?.animate()?.cancel()
+        // 必須先清 translation／alpha，避免 notify 後 ViewHolder 複用帶半透明
+        itemView?.let {
+            it.translationX = 0f
+            it.translationY = 0f
+            it.scaleX = 1f
+            it.scaleY = 1f
+            it.alpha = 1f
+            resetDragCardElevation(it)
+        }
+
+        adapter.finishDragCommitDelete(trip)
+        zoneHovered = false
+        binding.deleteZone.animate().cancel()
+        hideDeleteZone()
+        restoreFavoritesItemAnimator(binding.rvFavorites)
+
+        lifecycleScope.launch {
+            AppDatabase.get(this@MainActivity).favoriteDao().delete(trip)
+        }
+
+        binding.tvEmpty.visibility =
+            if (adapter.itemCount == 0) View.VISIBLE else View.GONE
+        if (!deleteZoneRevealed) {
+            applyFabAvailability(adapter.itemCount)
+        }
+    }
+
+    /**
+     * 取消刪除：先以 snapshot 還原順序，再把該卡（依 id 重找 view）
+     * 從刪除區位置動畫回拖曳前格子；刪除區淡出。
+     */
+    private fun cancelHeldDelete() {
+        if (!deleteConfirmPending) return
+        deleteConfirmPending = false
+        val oldView = heldDeleteItemView
+        val tripId = heldDeleteTrip?.id
+        val holdX = oldView?.translationX ?: 0f
+        val holdY = oldView?.translationY ?: 0f
+        heldDeleteItemView = null
+        heldDeleteTrip = null
+
+        // 還原 adapter 順序（拖曳中若 onMove 過也一併還原）
+        adapter.finishDrag(droppedOnDelete = true)
+
+        zoneHovered = false
+        binding.deleteZone.animate().cancel()
+        hideDeleteZone()
+
+        binding.rvFavorites.post {
+            val target = findItemViewByTripId(tripId) ?: oldView
+            if (target == null) {
+                restoreFavoritesItemAnimator(binding.rvFavorites)
+                return@post
+            }
+            // notify 後若 view 被重綁、translation 被清掉，補回投刪時位移再滑回
+            if (target.translationX == 0f && target.translationY == 0f &&
+                (holdX != 0f || holdY != 0f)
+            ) {
+                target.translationX = holdX
+                target.translationY = holdY
+                target.alpha = DRAG_CARD_DELETE_OVERLAP_ALPHA
+                applyDragCardElevation(target)
+            }
+            animateHeldCardBackToSlot(target)
+        }
+    }
+
+    private fun findItemViewByTripId(tripId: Long?): View? {
+        if (tripId == null) return null
+        val rv = binding.rvFavorites
+        for (i in 0 until rv.childCount) {
+            val child = rv.getChildAt(i) ?: continue
+            val holder = rv.getChildViewHolder(child)
+            val pos = holder.bindingAdapterPosition
+            if (pos != RecyclerView.NO_POSITION && adapter.itemAt(pos)?.id == tripId) {
+                return child
+            }
+        }
+        return null
+    }
+
+    private fun animateHeldCardBackToSlot(itemView: View) {
+        itemView.animate().cancel()
+        itemView.animate()
+            .translationX(0f)
+            .translationY(0f)
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(DELETE_HOLD_RESTORE_MS)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    resetDragCardElevation(itemView)
+                    restoreFavoritesItemAnimator(binding.rvFavorites)
+                }
+
+                override fun onAnimationCancel(animation: Animator) {
+                    itemView.translationX = 0f
+                    itemView.translationY = 0f
+                    itemView.alpha = 1f
+                    itemView.scaleX = 1f
+                    itemView.scaleY = 1f
+                    resetDragCardElevation(itemView)
+                    restoreFavoritesItemAnimator(binding.rvFavorites)
+                }
+            })
+            .start()
+    }
+
+    private fun restoreFavoritesItemAnimator(recyclerView: RecyclerView = binding.rvFavorites) {
+        val pendingAnimator = favoritesItemAnimator ?: return
+        favoritesItemAnimator = null
+        recyclerView.post {
+            if (recyclerView.itemAnimator == null) {
+                recyclerView.itemAnimator = pendingAnimator
+            }
+        }
     }
 
     private fun showAboutDialog() {
@@ -600,5 +802,7 @@ class MainActivity : AppCompatActivity() {
         /** 卡疊上刪除區時的半透明（提示將刪除） */
         private const val DRAG_CARD_DELETE_OVERLAP_ALPHA = 0.52f
         private const val DELETE_ZONE_OVERLAP_ALPHA = 0.7f
+        /** 取消刪除時卡片滑回原位 */
+        private const val DELETE_HOLD_RESTORE_MS = 220L
     }
 }
